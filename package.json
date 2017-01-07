@@ -1,0 +1,18 @@
+{
+  "name": "idol-submit",
+  "version": "1.0.0",
+  "description": "NodeJS code for submitting idols",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "idol"
+  ],
+  "author": "Huy Hoang Pham (huyhoang8a5@gmail.com)",
+  "license": "ISC",
+  "dependencies": {
+    "sleep": "^5.0.0",
+    "sync-request": "^3.0.1"
+  }
+}
