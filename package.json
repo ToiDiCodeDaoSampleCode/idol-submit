@@ -12,7 +12,6 @@
   "author": "Huy Hoang Pham (huyhoang8a5@gmail.com)",
   "license": "ISC",
   "dependencies": {
-    "sleep": "^5.0.0",
     "sync-request": "^3.0.1"
   }
 }
