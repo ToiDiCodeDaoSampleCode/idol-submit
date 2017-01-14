@@ -1,12 +1,21 @@
 // Sử dụng thư viện
 var request = require('sync-request');
-var sleep = require('sleep');
 
 // Lấy danh sách idol từ file filtered-idols.json
 var idols = require('./filtered-idols.json');
 
 let key = '91bc85*******'; // Thay thế bằng key của bạn
 let groupId = 'vav-idols';
+
+// NodeJS không có thread.sleep nên ra dùng tạm function này
+function sleep(time) {
+    console.log('Begin Sleep');
+    var stop = new Date().getTime();
+    while(new Date().getTime() < stop + time) {
+        ;
+    }
+    console.log('End Sleep');
+}
 
 // Tạo idol trên hệ thống
 function submitIdol(idol) {
@@ -32,7 +41,7 @@ function submitIdol(idol) {
             // Submit ảnh của idol lên hệ thống
             try {
                 submitIdolFace(person.personId, idol.images[i].image);
-                sleep.sleep(3); // Sleep 4 giây vì limit 20 call/phút
+                sleep(4*1000); // Sleep 4 giây vì limit 20 call/phút
             } catch (err) {
                 console.log('ERROR');
                 console.log(err);
