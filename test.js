@@ -5,6 +5,8 @@ var request = require('sync-request');
 var idols = require('./filtered-idols.json');
 var idolPerson = require('./idol-person.json');
 
+var falseData = require('./falseData.json');
+
 let key = '91bc85*******'; // Thay thế bằng key của bạn
 let groupId = 'vav-idols';
 
@@ -56,6 +58,9 @@ function identify(faceIds) {
     if (res.statusCode == 200) {
         console.log(`Finish identity face.`);
         return JSON.parse(res.getBody('utf8'));
+    } else {
+        console.log('Error');
+        console.log(res.getBody('utf8'));
     }
 }
 
@@ -77,6 +82,8 @@ function recognize(imageUrl) {
 
         // Lấy vị trí khuôn mặt trong ảnh để hiển thị
         result.face = detectedFaces.filter(face => face.faceId == result.faceId)[0].faceRectangle;
+
+        // Tìm idol đã được nhận diện từ DB
         if (result.candidates.length > 0) {
 
             // Kết quả chỉ trả về ID, dựa vào ID này ta tìm tên của idol
@@ -134,15 +141,57 @@ function runPositiveTest() {
            sleep(7*1000); // Sleep 7s vì mỗi lần recognize là 2 calls. Limit 1 phút/ 20 calls
         } catch (error) {
             console.log(error);
-        }
-        
+        } 
     }
 }
 
+function getNegativeTestData() {
+    var testData = [];
+    for (let idol of falseData) {
+        for (let i = 0; i < 10; i++) {
+            let image = idol.images[i].image;
+            testData.push({
+                id: 0,
+                name: 'Unknown',
+                image: image
+            });
+        }
+    }
+    return testData;
+}
+
+function runNegativeTest() {
+    var negativeTestData = getNegativeTestData();
+    let total = 0;
+    let trueNegative = 0;
+
+    for(let data of negativeTestData) {
+        try {
+           let result = recognize(data.image); 
+           if (result[0].idol.id == data.id) {
+               trueNegative++;
+               console.log(`HIT: ${data.id} - ${data.name}`);
+           } else {
+               console.log(`MISS. Data ${data.id} - ${data.name}. Found ${result[0].idol.id} - ${result[0].idol.name}`);
+           }
+           total++;
+           console.log(`True Negative: ${trueNegative}. Total ${total}`);
+
+           sleep(7*1000); // Sleep 7s vì mỗi lần recognize là 2 calls. Limit 1 phút/ 20 calls
+        } catch (error) {
+            console.log(error);
+        } 
+    }
+}
+
+
 /*
-// Chạy test độ chính xác của thuật API
+// Chạy test độ chính xác của API
 runPositiveTest();
+
+runNegativeTest();
 */
+
 
 /*
 // Test method recognize
